@@ -3,7 +3,7 @@
 </style><script>/* Campaign labels only: no analytics requests, cookies or personal identifiers. */
 (function(root){
  'use strict';
- const sources={ig:['instagram','organic_social'],tk:['tiktok','organic_social'],yt:['youtube','organic_social'],fab:['fablinker','creator'],magico:['magicomonta','creator'],panoz:['panozfootballclub','creator']};
+ const sources={ig:['instagram','organic_social'],tk:['tiktok','organic_social'],yt:['youtube','organic_social'],fab:['fablinker','creator'],magico:['magicomonta','creator'],panoz:['panozfootballclub','creator'],lucullus:['lucullusgames','creator'],icy:['icyaxy','creator'],nemo:['nemofm','creator'],mister:['misterfm','creator'],llama:['fmllama','creator'],playmygame:['playmygame','community'],androidgaming:['androidgaming','community'],fmfusion:['fmfusion','community']};
  const campaign='calcio_ottobre_2026',origin='https://kazael96.github.io',base=origin+'/king-agent-calcio/';
  const valid=s=>typeof s==='string'&&/^[a-z0-9_-]{1,64}$/.test(s);
  function labels(search){
@@ -16,6 +16,7 @@
  function decorate(url,search){
   const u=new URL(url,base),isDemo=u.origin===origin&&u.pathname==='/king-agent-calcio/',isStore=u.origin==='https://play.google.com'&&u.pathname==='/store/apps/details'&&u.searchParams.get('id')==='com.kazael96.kingagent';
   if(!isDemo&&!isStore)return url;
+  if(isDemo&&new URLSearchParams(search).get('lang')==='en')u.searchParams.set('lang','en');
   const data=labels(search);if(data)for(const [k,v] of Object.entries(data))u.searchParams.set(k,v);
   return u.href;
  }

@@ -489,7 +489,7 @@ body #modal .talk-number>span>span{font-size:12px}
 .edition-banner{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:8px 0;font-size:12px;color:#efcf9e}.edition-banner button{font-size:12px;padding:8px;min-height:36px}.edition-end{display:grid;gap:8px}.edition-end h3{margin:8px 0}.edition-end p{margin:0;line-height:1.5}.king-demo .cloud-panel,.king-demo .account-settings{display:none}</style><script>/* Campaign labels only: no analytics requests, cookies or personal identifiers. */
 (function(root){
  'use strict';
- const sources={ig:['instagram','organic_social'],tk:['tiktok','organic_social'],yt:['youtube','organic_social'],fab:['fablinker','creator'],magico:['magicomonta','creator'],panoz:['panozfootballclub','creator']};
+ const sources={ig:['instagram','organic_social'],tk:['tiktok','organic_social'],yt:['youtube','organic_social'],fab:['fablinker','creator'],magico:['magicomonta','creator'],panoz:['panozfootballclub','creator'],lucullus:['lucullusgames','creator'],icy:['icyaxy','creator'],nemo:['nemofm','creator'],mister:['misterfm','creator'],llama:['fmllama','creator'],playmygame:['playmygame','community'],androidgaming:['androidgaming','community'],fmfusion:['fmfusion','community']};
  const campaign='calcio_ottobre_2026',origin='https://kazael96.github.io',base=origin+'/king-agent-calcio/';
  const valid=s=>typeof s==='string'&&/^[a-z0-9_-]{1,64}$/.test(s);
  function labels(search){
@@ -502,6 +502,7 @@ body #modal .talk-number>span>span{font-size:12px}
  function decorate(url,search){
   const u=new URL(url,base),isDemo=u.origin===origin&&u.pathname==='/king-agent-calcio/',isStore=u.origin==='https://play.google.com'&&u.pathname==='/store/apps/details'&&u.searchParams.get('id')==='com.kazael96.kingagent';
   if(!isDemo&&!isStore)return url;
+  if(isDemo&&new URLSearchParams(search).get('lang')==='en')u.searchParams.set('lang','en');
   const data=labels(search);if(data)for(const [k,v] of Object.entries(data))u.searchParams.set(k,v);
   return u.href;
  }
@@ -1658,6 +1659,7 @@ function openKingStore(){
 function demoEndDialog(){
  const body=el('div',undefined,'edition-end');
  body.append(el('p','Hai completato la tua prima stagione da agente. La partita resta salvata: puoi consultarla ed esportarla.'),el('h3','Continua la tua carriera'),el('p','Nel gioco completo puoi affrontare tutte le stagioni che vuoi. Acquisto unico: 0,99 €.'),btn(KING_EDITION.storeAvailable?'Acquista sul Play Store · 0,99 €':'Versione completa · 0,99 €',openKingStore,'','primary'),btn('Esporta questa carriera',exportSave));
+ if(typeof demoChallengeCard==='function')body.append(demoChallengeCard());
  if(!KING_EDITION.storeAvailable)body.append(el('p','In arrivo sul Play Store.','rules'));
  ask('Demo completata',body,()=>{});$('confirm').textContent='Consulta la tua agenzia';$('cancel').hidden=true;
 }
@@ -1669,10 +1671,33 @@ if(KING_EDITION.demo){
  accountConfigured=()=>false;
  accountDialog=()=>{ask('Account nel gioco completo','La demo conserva le carriere su questo browser. Accesso e sincronizzazione cloud sono disponibili nel gioco completo.',()=>{});$('confirm').textContent='Ho capito';$('cancel').hidden=true};
  const editionRender=render;render=()=>{editionRender();document.body.classList.add('king-demo');if(tab==='office'){
-  const banner=el('div',undefined,'edition-banner');banner.append(el('strong',demoFinished()?'Demo completata':'Demo · una stagione'),btn(demoFinished()?'Gioco completo · 0,99 €':'Informazioni',demoFinished()?openKingStore:()=>ask('Demo di King Agent Calcio','Prova una stagione completa. I salvataggi della demo sono separati da quelli del gioco completo. Alla fine puoi esportare la carriera e importarla nella versione completa.',()=>{})));
+  const banner=el('div',undefined,'edition-banner');banner.append(el('strong',demoFinished()?'Demo completata':'Demo · una stagione'),btn(demoFinished()?'Gioco completo · 0,99 €':'Sfida',demoFinished()?openKingStore:()=>demoChallengeDialog()));
   $('content').prepend(banner);
  }if(demoFinished()){for(const next of [$('advance'),document.querySelector('.launcher-continue')].filter(Boolean)){next.textContent='Demo completata · gioco completo';next.onclick=demoEndDialog;next.disabled=false}}};
 }
+
+/* Optional demo challenge: presentation only; no career values or rules change. */
+function demoChallengeSummary(s){
+ const weeks=Math.max(0,Math.min(52,Math.floor((Number(s.week)||1)-1)));
+ const deals=Array.isArray(s.history)?s.history.filter(h=>Number.isInteger(h.week)&&h.week>=1&&h.week<=52).length:0;
+ return {weeks,deals,finished:s.week>52,ended:!!s.ended,cash:Number(s.cash)||0};
+}
+function demoChallengeText(s=state,lang=kingLanguage){
+ const r=demoChallengeSummary(s),cash=new Intl.NumberFormat(lang==='en'?'en-GB':'it-IT',{style:'currency',currency:'EUR',maximumFractionDigits:0}).format(r.cash);
+ return lang==='en'?`King Agent Calcio — One-season challenge\nWeeks completed: ${r.weeks}/52\nDeals signed in the first season: ${r.deals}\nCurrent cash: ${cash}\n${r.finished?'Season completed':r.ended?'Career ended early':'Career in progress'}\nSelf-reported result from a local career. #KingAgentCalcio`:`King Agent Calcio — Sfida di una stagione\nSettimane completate: ${r.weeks}/52\nAccordi firmati nella prima stagione: ${r.deals}\nSaldo attuale: ${cash}\n${r.finished?'Stagione completata':r.ended?'Carriera terminata prima della fine':'Carriera in corso'}\nRisultato autodichiarato di una partita locale. #KingAgentCalcio`;
+}
+function demoChallengeCard(){
+ const r=demoChallengeSummary(state),en=kingLanguage==='en',body=el('section',undefined,'edition-challenge');
+ body.append(el('h3',en?'One season. How many deals?':'Una stagione. Quanti accordi?'),el('p',en?'Play the 52-week demo and share your result. Start a new save slot for a fresh attempt; existing careers stay safe.':'Gioca le 52 settimane della demo e condividi il risultato. Per partire da zero usa un nuovo slot di salvataggio: le carriere esistenti restano al sicuro.'),el('strong',(en?'Weeks completed: ':'Settimane completate: ')+r.weeks+'/52'),el('p',(en?'Deals signed: ':'Accordi firmati: ')+r.deals),el('p',en?'Personal challenge: no prizes or verified leaderboard. Local careers use different random events; results are not directly comparable.':'Sfida personale: nessun premio o classifica verificata. Ogni partita ha eventi casuali diversi: i risultati non sono direttamente confrontabili.','rules'));
+ const copy=btn(en?'Copy result':'Copia risultato',async()=>{
+  try{await navigator.clipboard.writeText(demoChallengeText());copy.textContent=en?'Result copied':'Risultato copiato'}
+  catch{const fallback=el('textarea');fallback.value=demoChallengeText();fallback.readOnly=true;fallback.setAttribute('aria-label',en?'Result to copy':'Risultato da copiare');body.append(fallback);fallback.focus();fallback.select()}
+ });body.append(copy);return body;
+}
+function demoChallengeDialog(){ask(kingLanguage==='en'?'One-season challenge':'Sfida di una stagione',demoChallengeCard(),()=>{});$('confirm').textContent=kingLanguage==='en'?'Continue playing':'Continua a giocare';$('cancel').hidden=true}
+if(typeof KING_EN!=='undefined')Object.assign(KING_EN,{'Sfida':'Challenge'});
+const demoChallengeBoot=boot;
+boot=()=>{const q=new URLSearchParams(location.search);demoChallengeBoot();if(q.get('lang')==='en')setKingLanguage('en');if(q.get('challenge')==='1')demoChallengeDialog()};
 
 if(typeof document!=='undefined')boot();
 </script></body></html>
