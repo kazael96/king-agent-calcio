@@ -486,7 +486,34 @@ body #modal .talk-number>span>span{font-size:12px}
 /* Language settings */
 .language-settings{padding:14px;border:1px solid #947d68;border-radius:12px;background:#322630;margin:0 0 14px}.language-settings .field{display:block;font:700 18px Georgia,serif;color:#efcf9e}.language-settings select{display:block;margin-top:10px;width:100%;min-height:48px;border-radius:9px;background:#241e29;color:#f4ead7;border:1px solid #947d68;padding:10px;font:400 14px system-ui,sans-serif}.language-settings p{margin:10px 0 0;line-height:1.45}.art-agency .cloud-panel,.art-agency .account-settings{background:#322630;border-color:#947d68}.art-agency .cloud-panel h3,.art-agency .account-settings h2{color:#efcf9e}#modalTitle:focus{outline:none}
 @media(max-width:600px){.screen-viewport>button:not([class]),.screen-viewport>button[class=""],.screen-viewport>.guide-preference{display:block;width:100%;margin:10px 0 0}}
-.edition-banner{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:8px 0;font-size:12px;color:#efcf9e}.edition-banner button{font-size:12px;padding:8px;min-height:36px}.edition-end{display:grid;gap:8px}.edition-end h3{margin:8px 0}.edition-end p{margin:0;line-height:1.5}.king-demo .cloud-panel,.king-demo .account-settings{display:none}</style></head><body><header><div class="logo">KING<span> AGENT</span></div><span id="saveState" role="status">Salvataggio automatico</span></header><main><div class="hero"><div><div class="eyebrow">IL TUO UFFICIO. IL LORO FUTURO.</div><h1 id="agency">King Agent</h1><div class="muted" id="calendar"></div></div><button class="primary" id="advance">Avanza di una settimana →</button></div><div class="metrics" id="metrics"></div><div class="notice" role="status" aria-live="polite" id="message"></div><nav class="tabs" id="tabs" aria-label="Sezioni dell’agenzia"></nav><div class="grid"><section id="content" aria-label="Contenuto della sezione"></section><aside><section class="panel"><h2>Dal tuo ufficio</h2><ol class="news" id="news"></ol></section><section class="panel" style="margin-top:16px"><h2>Come si costruisce una carriera</h2><p id="quickStats" class="rules"></p><p class="rules">Ingaggia talenti, cura i rapporti e chiudi accordi. Le consultazioni sono gratuite; le proposte possono essere rifiutate.</p><p class="rules">Giocatori e club inventati. La simulazione usa regole di gioco semplificate.</p></section></aside></div><footer>King Agent Calcio · Carriera su più stagioni · Salvataggio locale · Esporta la partita dalle impostazioni</footer></main><dialog id="modal" aria-labelledby="modalTitle"><h2 id="modalTitle"></h2><div id="modalBody" class="modal-body"></div><div class="actions"><button id="confirm" class="primary">Conferma</button><button id="cancel">Annulla</button></div></dialog><input id="importFile" type="file" accept="application/json,.json" aria-label="Importa un salvataggio"><script>'use strict';
+.edition-banner{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:8px 0;font-size:12px;color:#efcf9e}.edition-banner button{font-size:12px;padding:8px;min-height:36px}.edition-end{display:grid;gap:8px}.edition-end h3{margin:8px 0}.edition-end p{margin:0;line-height:1.5}.king-demo .cloud-panel,.king-demo .account-settings{display:none}</style><script>/* Campaign labels only: no analytics requests, cookies or personal identifiers. */
+(function(root){
+ 'use strict';
+ const sources={ig:['instagram','organic_social'],tk:['tiktok','organic_social'],yt:['youtube','organic_social'],fab:['fablinker','creator'],magico:['magicomonta','creator'],panoz:['panozfootballclub','creator']};
+ const campaign='calcio_ottobre_2026',origin='https://kazael96.github.io',base=origin+'/king-agent-calcio/';
+ const valid=s=>typeof s==='string'&&/^[a-z0-9_-]{1,64}$/.test(s);
+ function labels(search){
+  const q=new URLSearchParams(search),alias=q.get('src');let pair=Object.hasOwn(sources,alias)?sources[alias]:null;
+  if(!pair)pair=Object.values(sources).find(p=>p[0]===q.get('utm_source'));
+  if(!pair)return null;
+  const content=q.get('v')||q.get('utm_content');
+  return {utm_source:pair[0],utm_medium:pair[1],utm_campaign:campaign,...(valid(content)?{utm_content:content}:{})};
+ }
+ function decorate(url,search){
+  const u=new URL(url,base),isDemo=u.origin===origin&&u.pathname==='/king-agent-calcio/',isStore=u.origin==='https://play.google.com'&&u.pathname==='/store/apps/details'&&u.searchParams.get('id')==='com.kazael96.kingagent';
+  if(!isDemo&&!isStore)return url;
+  const data=labels(search);if(data)for(const [k,v] of Object.entries(data))u.searchParams.set(k,v);
+  return u.href;
+ }
+ const api={labels,decorate,storeUrl:url=>decorate(url,root.location?root.location.search:'')};
+ if(typeof module!=='undefined'&&module.exports)module.exports=api;
+ if(root.document){
+  root.KingAgentCampaign=api;
+  const apply=()=>root.document.querySelectorAll('a.demo-link,a.store-link').forEach(a=>{a.href=decorate(a.href,root.location.search)});
+  if(root.document.readyState==='loading')root.document.addEventListener('DOMContentLoaded',apply,{once:true});else apply();
+ }
+})(typeof window==='undefined'?{}:window);
+</script></head><body><header><div class="logo">KING<span> AGENT</span></div><span id="saveState" role="status">Salvataggio automatico</span></header><main><div class="hero"><div><div class="eyebrow">IL TUO UFFICIO. IL LORO FUTURO.</div><h1 id="agency">King Agent</h1><div class="muted" id="calendar"></div></div><button class="primary" id="advance">Avanza di una settimana →</button></div><div class="metrics" id="metrics"></div><div class="notice" role="status" aria-live="polite" id="message"></div><nav class="tabs" id="tabs" aria-label="Sezioni dell’agenzia"></nav><div class="grid"><section id="content" aria-label="Contenuto della sezione"></section><aside><section class="panel"><h2>Dal tuo ufficio</h2><ol class="news" id="news"></ol></section><section class="panel" style="margin-top:16px"><h2>Come si costruisce una carriera</h2><p id="quickStats" class="rules"></p><p class="rules">Ingaggia talenti, cura i rapporti e chiudi accordi. Le consultazioni sono gratuite; le proposte possono essere rifiutate.</p><p class="rules">Giocatori e club inventati. La simulazione usa regole di gioco semplificate.</p></section></aside></div><footer>King Agent Calcio · Carriera su più stagioni · Salvataggio locale · Esporta la partita dalle impostazioni</footer></main><dialog id="modal" aria-labelledby="modalTitle"><h2 id="modalTitle"></h2><div id="modalBody" class="modal-body"></div><div class="actions"><button id="confirm" class="primary">Conferma</button><button id="cancel">Annulla</button></div></dialog><input id="importFile" type="file" accept="application/json,.json" aria-label="Importa un salvataggio"><script>'use strict';
 /* Sport identity is separate from career data and from the interface language.
  * Keep these persisted role/country keys stable for existing football careers. */
 const KING_SPORT=Object.freeze({
@@ -1624,7 +1651,8 @@ const KING_EDITION = {"demo":true,"packageId":"com.kazael96.kingagent","storeAva
 function demoFinished(){return KING_EDITION.demo && state.week>52}
 function openKingStore(){
  if(!KING_EDITION.storeAvailable){ask('King Agent Calcio completo', 'La versione completa a 0,99 € è in preparazione. Il collegamento al Play Store sarà disponibile dopo la pubblicazione.',()=>{});$('confirm').textContent='Ho capito';$('cancel').hidden=true;return}
- const url='https://play.google.com/store/apps/details?id='+KING_EDITION.packageId;
+ const store='https://play.google.com/store/apps/details?id='+KING_EDITION.packageId;
+ const url=window.KingAgentCampaign?window.KingAgentCampaign.storeUrl(store):store;
  window.open(url,'_blank','noopener,noreferrer');
 }
 function demoEndDialog(){
