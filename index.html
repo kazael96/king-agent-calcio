@@ -502,7 +502,7 @@ body #modal .talk-number>span>span{font-size:12px}
  function decorate(url,search){
   const u=new URL(url,base),isDemo=u.origin===origin&&u.pathname==='/king-agent-calcio/',isStore=u.origin==='https://play.google.com'&&u.pathname==='/store/apps/details'&&u.searchParams.get('id')==='com.kazael96.kingagent';
   if(!isDemo&&!isStore)return url;
-  if(isDemo&&new URLSearchParams(search).get('lang')==='en')u.searchParams.set('lang','en');
+  const lang=new URLSearchParams(search).get('lang');if(isDemo&&['it','en'].includes(lang))u.searchParams.set('lang',lang);
   const data=labels(search);if(data)for(const [k,v] of Object.entries(data))u.searchParams.set(k,v);
   return u.href;
  }
@@ -1697,7 +1697,7 @@ function demoChallengeCard(){
 function demoChallengeDialog(){ask(kingLanguage==='en'?'One-season challenge':'Sfida di una stagione',demoChallengeCard(),()=>{});$('confirm').textContent=kingLanguage==='en'?'Continue playing':'Continua a giocare';$('cancel').hidden=true}
 if(typeof KING_EN!=='undefined')Object.assign(KING_EN,{'Sfida':'Challenge'});
 const demoChallengeBoot=boot;
-boot=()=>{const q=new URLSearchParams(location.search);demoChallengeBoot();if(q.get('lang')==='en')setKingLanguage('en');if(q.get('challenge')==='1')demoChallengeDialog()};
+boot=()=>{const q=new URLSearchParams(location.search);demoChallengeBoot();if(['it','en'].includes(q.get('lang')))setKingLanguage(q.get('lang'));if(q.get('challenge')==='1')demoChallengeDialog()};
 
 if(typeof document!=='undefined')boot();
 </script></body></html>
