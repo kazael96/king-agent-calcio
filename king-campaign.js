@@ -3,7 +3,7 @@
  'use strict';
  const SOURCES={ig:['instagram','organic_social'],tk:['tiktok','organic_social'],yt:['youtube','organic_social'],qa:['qa','referral'],fab:['fablinker','creator'],magico:['magicomonta','creator'],panoz:['panozfootballclub','creator'],icy:['icyaxy','creator'],nemo:['nemofm','creator'],mister:['misterfm','creator'],playmygame:['playmygame','community'],androidgaming:['androidgaming','community'],fmfusion:['fmfusion','community']};
  const CAMPAIGNS=['calcio_ottobre_2026','king_agent_multisport_2026','calcio_musica_2026','calcio_narrato_2026','king_agent_novembre_2026','king_agent_qa_2026'];
- const CONTENTS=['01-la-controproposta','02-due-talenti','03-i-soldi-della-firma','scelta-talento','incasso-accordo','bio','basket','volley','cricket','hockey','sfida-stagione','trattativa-completa','basket-minuti','calcio-accordo','prova-10','percorso-mobile'];
+ const CONTENTS=['01-la-controproposta','02-due-talenti','03-i-soldi-della-firma','scelta-talento','incasso-accordo','bio','basket','volley','cricket','hockey','sfida-stagione','trattativa-completa','basket-minuti','calcio-due-talenti','calcio-accordo','prova-10','percorso-mobile'];
  const PACKAGES={'com.kazael96.kingagent':'calcio','com.kazael96.kingagentbasket':'basket','com.kazael96.kingagentvolley':'volley','com.kazael96.kingagentcricket.paid':'cricket','com.kazael96.kingagenthockey':'hockey','com.kazael96.kingagentrugby':'rugby'};
  const ORIGIN='https://kazael96.github.io',BASE='/king-agent-calcio/';
  function labels(search){
