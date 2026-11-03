@@ -2,22 +2,16 @@
 (function(root){
  'use strict';
  const ID='G-CDLJMP3WQE', KEY='king-agent-web-statistics-v1', DAYS=180;
- const PACKAGES={'com.kazael96.kingagent':'calcio','com.kazael96.kingagentbasket':'basket','com.kazael96.kingagentvolley':'volley','com.kazael96.kingagentcricket.paid':'cricket','com.kazael96.kingagenthockey':'hockey'};
- const SOURCES=['instagram','tiktok','youtube','creator','direct'], CAMPAIGNS=['calcio_ottobre_2026','king_agent_multisport_2026','calcio_musica_2026','calcio_narrato_2026'];
+ const campaign=typeof module==='object'&&module.exports?require('./king-campaign.js'):root.KingAgentCampaign;
+ const PACKAGES=campaign.PACKAGES;
  function context(href){
-  const u=new URL(href),q=u.searchParams,path=u.pathname;
-  const source=q.get('utm_source')||({ig:'instagram',tk:'tiktok',yt:'youtube'}[q.get('src')])||'direct';
-  const campaign=q.get('utm_campaign')||'calcio_ottobre_2026';
-  const kind=path.endsWith('scopri.html')?'landing':'demo';
-  const sport=path.endsWith('demo-basket.html')?'basket':path.endsWith('demo-volley.html')?'volley':'calcio';
+  const u=new URL(href),path=u.pathname,file=path.split('/').pop();
+  const labels=campaign.labels(u.search);
+  const kind=file==='scopri.html'||file==='basket.html'?'landing':'demo';
+  const sport=path.endsWith('basket.html')?'basket':path.endsWith('demo-volley.html')?'volley':'calcio';
   const clean=new URL(u.origin+path);
-  if(SOURCES.includes(source)&&source!=='direct'){
-   clean.searchParams.set('utm_source',source);clean.searchParams.set('utm_medium',source==='creator'?'referral':'organic_social');
-   if(CAMPAIGNS.includes(campaign))clean.searchParams.set('utm_campaign',campaign);
-   const content=q.get('utm_content')||q.get('v')||'';
-   if(/^(01-la-controproposta|02-due-talenti|03-i-soldi-della-firma|scelta-talento|incasso-accordo|bio|basket|volley|cricket|hockey|sfida-stagione|trattativa-completa)(-en)?$/.test(content))clean.searchParams.set('utm_content',content);
-  }
-  return {sport,page_kind:kind,page_location:clean.href,page_referrer:'',page_title:'King Agent '+(kind==='landing'?'— Sito':'— Demo '+sport)};
+  if(labels)for(const [k,v] of Object.entries(labels))clean.searchParams.set(k,v);
+  return {sport,page_kind:kind,page_location:clean.href,page_referrer:'',page_title:'King Agent '+sport+' — '+(kind==='landing'?'Sito':'Demo')};
  }
  function storeSport(href){try{const u=new URL(href);return u.hostname==='play.google.com'&&u.pathname==='/store/apps/details'?PACKAGES[u.searchParams.get('id')]||null:null}catch{return null}}
  if(typeof module==='object'&&module.exports){module.exports={context,storeSport};return}
